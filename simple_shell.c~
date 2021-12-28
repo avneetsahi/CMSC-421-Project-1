@@ -1,0 +1,101 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <ctype.h>
+#include <string.h>
+#include "utils.h"
+
+// the file you are going to write your user input in
+
+int main() {
+  
+  int BUFFER_SIZE = 250; // constant for size of input
+  int counter = 0; // how many characters in argument
+  int args_counter = 0; // how many arguments in array
+
+  // initialization of array of user input
+  char *user_input = NULL;
+  user_input = (char*)malloc(BUFFER_SIZE * sizeof(char) );
+
+  // take input and put into sep array to pass into exec()
+  char** args = NULL;
+  args = (char**)malloc(BUFFER_SIZE * sizeof(char) );
+
+  // split up char array at spaces
+  char* token = NULL;
+  //token = malloc(sizeof(*token));
+
+  // while user does not enter 'exit' keep prompting
+  while (1) {
+    printf("$ " );
+
+    // read in user input and put into 1D array
+    int index = 0;
+    int i = 0;
+
+    while((index = fgetc(stdin)) != '\n') {
+      user_input[i] = index;
+      counter++;
+      i++;
+    }
+    
+
+    token = strtok(user_input, " "); // causes conditional jump
+    
+    int j = 0;
+    while (token != NULL) {
+      args[j] = token;
+      token = strtok(NULL, " "); // causes conditional jump
+      j++;
+      args_counter++;
+    }
+    free(token);
+    token = NULL;
+      
+    
+    // if command exit, exit process
+    if (strcmp(args[0], "exit") == 0){  // causes conditional jump
+      exit(0);
+    }
+    
+
+    /*
+    // running execvp()
+    int pid = fork();
+
+    if (pid == 0){
+    execvp(args[0], args);
+    
+    } else {
+    wait(NULL);
+    }
+    */
+  }
+  
+  // free memory for user_input
+  for (int i = 0; i < counter; i++) {
+    printf("freeing user_input memory");
+    free(user_input[i]);
+    user_input[i] = NULL;
+  }
+  //free(user_input);
+  user_input = NULL;
+
+  // free memory for args
+  for (int i = 0; i < args_counter; i++) {
+    printf("freeing args memory");
+    free(args[i]);
+    args[i] = NULL;
+  }
+  //free(args);
+  args = NULL;
+
+  // free token
+  printf("freeing token");
+  free(token);
+  token = NULL;
+  
+  return 0;
+
+  
+}
